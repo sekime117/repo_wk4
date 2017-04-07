@@ -1,0 +1,89 @@
+---
+title: 'HW4: BookBaskets'
+author: "Esther"
+date: "April 5, 2017"
+output: html_document
+---
+## R Markdown
+
+```{r}
+getwd()
+setwd("C:/Users/Esther/Documents/1_courses/2_BIA_6301_HW/repo_wk4/script")
+
+library(arules) 
+bookbaskets <- read.transactions("C:/Users/Esther/Documents/1_courses/2_BIA_6301_HW/repo_wk4/data/bookdata.tsv.gz", format="single",  	# Note: 2 
+                                 sep="\t",                    	# Note: 3 
+                                 cols=c("userid", "title"),    	# Note: 4 
+                                 rm.duplicates=T)       	# Note: 5
+
+# Note 1: Load the arules package. 
+# Note 2: Specify the file and the file format. 
+# Note 3: Specify the column separator (a tab). 
+# Note 4: Specify the column of transaction IDs and of item IDs, respectively. 
+# Note 5: Tell the function to look for and removeduplicate entries (for example, multiple entries 
+#            for “The Hobbit” by the same user). 
+#92,108  book purchases.
+#220,447 user IDs.
+#
+#inspect(bookbaskets[1:5]) #Examine the first five transactions
+#basketSizes<-size(bookbaskets) #Calculate number of books purchased by "userID"
+#bookFreq<-itemFrequency(bookbaskets) #Calculate the support for each book title 
+#bookCount <- (bookFreq/sum(bookFreq))*sum(basketSizes) Get the absolute count of book occurrences. 
+#bookbasket_use<-bookbaskets[basketSizes>1] #Only keep transactions with more than one book purchased. 
+#bookbasket_use
+####
+#
+#start your code here.
+```
+
+```{r}
+options(scipen=999)
+str(bookbaskets)
+ 
+```
+```{r}
+head(bookbaskets)
+```
+```{r}
+summary(bookbaskets)
+## most frequest items are:
+## Wild Animus  2502
+## The Lovely Bones: A Novel 1295
+## She's comes Undone: 934
+## The Da Vinci Code: 905
+## Harry Potter and the Sorcerer's Stone: 832
+## Other: 101,5847
+```
+```{r}
+inspect(bookbaskets[1:5])          #Examine the first five transactions
+basketsize <- size(bookbaskets)    #Calculate number of books purchased by "userID"basketsize
+bookFreq <- itemFrequency(bookbaskets,type="absolute")  #Calculate the support for each book title 
+sort( bookFreq,decreasing = TRUE)  ## sort support in decrease order
+
+
+# bookCount <- (bookFreq/sum(bookFreq))*sum(basketSizes) Get the absolute count of book occurrences. 
+#bookbasket_use<-bookbaskets[basketSizes>1] #Only keep transactions with more than one book purchased. 
+#bookbasket_use
+
+?itemFrequency
+bookFreq<-itemFrequency(bookbaskets) #Calculate the support for each book title 
+#bookCount <- (bookFreq/sum(bookFreq))*sum(basketSizes) 
+#   Get the absolute count of book occurrences. 
+#bookbasket_use<-bookbaskets[basketSizes>1] #Only keep transactions with more than one book purchased. 
+#bookbasket_use
+
+top10 <- itemFrequencyPlot(bookbaskets,topN= 10)
+##itemFrequencyPlot(bookbaskets, support=0.1)
+
+
+rules <- apriori(bookbaskets, parameter = list(support=0.5, conf=0.9, target="rules"))
+rules.sort <-  sort(rules, by="lift")
+inspect(rules.sort)
+
+ 
+library(arulesViz)
+ 
+ 
+ 
+```
+
